@@ -4,7 +4,8 @@ import h5py
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--image', required=True, help='path to image')
+parser.add_argument('--imageprefix', required=True, help='prefix of image slices')
+parser.add_argument('--Nimages', type=int, required=True, help='path to image')
 parser.add_argument('--name', required=True, help='name of dataset')
 parser.add_argument('--edgelength', type=int, default=128, help='input batch size')
 parser.add_argument('--stride', type=int, default=32, help='the height / width of the input image to network')
@@ -13,7 +14,12 @@ parser.add_argument('--target_dir', required=True, help='path to store training 
 opt = parser.parse_args()
 print(opt)
 
-img = tifffile.imread(str(opt.image))
+img = []
+for i in range(opt.Nimages) :
+    image_filename = opt.imageprefix + "{:03d}.tif".format(i)
+    img.append(tifffile.imread(image_filename))
+img = np.dstack(img)
+print(img.shape)
 
 count = 0
 
