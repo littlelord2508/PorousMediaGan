@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.parallel
+from IPython import embed
 
 class DCGAN3D_D(nn.Container):
     def __init__(self, isize, nz, nc, ndf, ngpu, n_extra_layers=0):
@@ -50,7 +51,9 @@ class DCGAN3D_D(nn.Container):
         if isinstance(input.data, torch.cuda.FloatTensor) and self.ngpu > 1:
             gpu_ids = range(self.ngpu)
         output = nn.parallel.data_parallel(self.main, input, gpu_ids)
-        return output.view(-1, 1)
+        # embed()
+        print(output.shape)
+        return output.squeeze()
 
 class DCGAN3D_G(nn.Container):
     def __init__(self, isize, nz, nc, ngf, ngpu, n_extra_layers=0):

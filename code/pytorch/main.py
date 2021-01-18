@@ -16,6 +16,7 @@ from dataset import HDF5Dataset
 from hdf5_io import save_hdf5
 import dcgan
 import numpy as np
+from IPython import embed
 np.random.seed(43)
 
 #Change workdir to where you want the files output
@@ -140,19 +141,25 @@ for epoch in range(opt.niter):
         real_cpu = data
             
         batch_size = real_cpu.size(0)
-        input.data.resize_(real_cpu.size()).copy_(real_cpu)
-        label.data.resize_(batch_size).fill_(real_label)
+        print(input.shape)
         
+        input.resize_(real_cpu.size()).copy_(real_cpu)
+        with torch.no_grad():
+            label.resize_(batch_size).fill_(real_label)
+        # embed()
         output = netD(input)
+        print(output.size())
+        print(label.size())
         errD_real = criterion(output, label)
         errD_real.backward()
         D_x = output.data.mean()
 
         # train with fake
-        noise.data.resize_(batch_size, nz, 1, 1, 1)
-        noise.data.normal_(0, 1)
+        noise.resize_(batch_size, nz, 1, 1, 1)
+        noise.normal_(0, 1)
         fake = netG(noise).detach()
         label.data.fill_(fake_label)
+        
         output = netD(fake)
         errD_fake = criterion(output, label)
         errD_fake.backward()
@@ -178,12 +185,13 @@ for epoch in range(opt.niter):
         
         gen_iterations += 1
 
+        
         print('[%d/%d][%d/%d] Loss_D: %.4f Loss_G: %.4f D(x): %.4f D(G(z)): %.4f / %.4f'
               % (epoch, opt.niter, i, len(dataloader),
-                 errD.data[0], errG.data[0], D_x, D_G_z1, D_G_z2))
+                 errD.data.item(), errG.data.item(), D_x, D_G_z1, D_G_z2))
         f.write('[%d/%d][%d/%d] Loss_D: %.4f Loss_G: %.4f D(x): %.4f D(G(z)): %.4f / %.4f'
               % (epoch, opt.niter, i, len(dataloader),
-                 errD.data[0], errG.data[0], D_x, D_G_z1, D_G_z2))
+                 errD.data.item(), errG.data.item(), D_x, D_G_z1, D_G_z2))
         f.write('\n')
         f.close()
         
