@@ -52,7 +52,6 @@ class DCGAN3D_D(nn.Container):
             gpu_ids = range(self.ngpu)
         output = nn.parallel.data_parallel(self.main, input, gpu_ids)
         # embed()
-        print(output.shape)
         return output.squeeze()
 
 class DCGAN3D_G(nn.Container):

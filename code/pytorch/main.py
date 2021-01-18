@@ -141,15 +141,12 @@ for epoch in range(opt.niter):
         real_cpu = data
             
         batch_size = real_cpu.size(0)
-        print(input.shape)
         
         input.resize_(real_cpu.size()).copy_(real_cpu)
         with torch.no_grad():
             label.resize_(batch_size).fill_(real_label)
         # embed()
         output = netD(input)
-        print(output.size())
-        print(label.size())
         errD_real = criterion(output, label)
         errD_real.backward()
         D_x = output.data.mean()
