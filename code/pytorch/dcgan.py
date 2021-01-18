@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.parallel
 from IPython import embed
 
-class DCGAN3D_D(nn.Container):
+class DCGAN3D_D(nn.Module):
     def __init__(self, isize, nz, nc, ndf, ngpu, n_extra_layers=0):
         super(DCGAN3D_D, self).__init__()
         self.ngpu = ngpu
@@ -54,7 +54,7 @@ class DCGAN3D_D(nn.Container):
         # embed()
         return output.squeeze()
 
-class DCGAN3D_G(nn.Container):
+class DCGAN3D_G(nn.Module):
     def __init__(self, isize, nz, nc, ngf, ngpu, n_extra_layers=0):
         super(DCGAN3D_G, self).__init__()
         self.ngpu = ngpu
@@ -105,7 +105,7 @@ class DCGAN3D_G(nn.Container):
             gpu_ids = range(self.ngpu)
         return nn.parallel.data_parallel(self.main, input, gpu_ids)
 
-class DCGAN3D_G_CPU(nn.Container):
+class DCGAN3D_G_CPU(nn.Module):
     def __init__(self, isize, nz, nc, ngf, ngpu, n_extra_layers=0):
         super(DCGAN3D_G_CPU, self).__init__()
         self.ngpu = ngpu
